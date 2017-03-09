@@ -1,0 +1,15 @@
+CACHE MANIFEST
+#version 0.2
+
+CACHE:
+    css/material.min.css
+    css/material-font.css
+    css/font.woff2
+    js/axios.min.js
+    js/material.min.js
+    js/page.js
+    course.html
+    api/getCourse
+    api/getWeek
+NETWORK:
+    index.html

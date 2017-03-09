@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta n-head="true" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
+    <meta name="theme-color" content="#3f51b5">
+</head>
+<link rel="stylesheet" href="css/material.min.css">
+<link rel="stylesheet" href="css/material-font.css">
+<script src="js/material.min.js"></script>
+
+<body>
+    <div class="container">
+        <h1> Login </h1>
+        <p> 为抓取课表请输入<a href="http://jwc.cugb.edu.cn">教育在线</a>账号密码</p>
+        <p>如遇验证码不显示请等待数秒</p>
+        <p>如遇验证码不清请点击图片刷新</p>
+        <p>如遇数据显示不正常等问题请清空浏览器缓存后尝试</p>
+        <p>本系统不会记录账号密码信息</p>
+        <form method="post" action="login">
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="text" pattern="[0-9]{10}" id="id" name="id">
+                <label class="mdl-textfield__label" for="id">ID</label>
+                <span class="mdl-textfield__error">Input is not an ID!</span>
+            </div>
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="password" id="password" name="password">
+                <label class="mdl-textfield__label" for="password">Password</label>
+            </div>
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="text" pattern="[0-9]*" name="captcha" autocomplete="off">
+                <label class="mdl-textfield__label" for="captcha">Captcha</label>
+                <span class="mdl-textfield__error">Input is not a captcha!</span>
+            </div>
+            <input name="cookie" style="display: none" />
+            <img id="captcha" onclick="setCaptcha()" />
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored" type="submit" value="login">
+                login
+            </button>
+        </form>
+        <div style="position: absolute;bottom: 2em;    right: 1em;">Class Schedule by <a href="https://sxing.xyz">STay</a></div>
+    </div>
+</body>
+<script src="js/axios.min.js">
+</script>
+<script>
+    var cookie = ""
+    axios.get('api/setcookie')
+        .then((res) => {
+            cookie = res.data
+            console.log(cookie)
+            document.querySelector('[name=cookie]').setAttribute('value', cookie)
+            setCaptcha()
+        })
+
+    function setCaptcha() {
+        axios.get('api/captcha', {
+                params: {
+                    'cookie': cookie
+                }
+            })
+            .then((r) => {
+                document.querySelector('#captcha').setAttribute('src', "data:image/jpeg;base64," + r.data)
+            })
+    }
+</script>
+<style>
+    .container {
+        margin: 0 2em;
+    }
+    
+    @media screen and (min-width: 900px) {
+        .container {
+            margin: 10em auto;
+            width: 21%;
+        }
+    }
+    
+    #captcha {
+        cursor: pointer;
+        width: 81px;
+        height: 36px;
+    }
+    
+    input {
+        margin: 10px;
+    }
+</style>
+
+</html>
