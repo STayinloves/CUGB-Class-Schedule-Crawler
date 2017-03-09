@@ -7,3 +7,5 @@
 前端基于 HTML5 manifest 实现资源缓存，并适配移动端，使用 Google material design 风格设计
 
 由于校内网不允许外网访问，校外请见以下渲染图，校内可直接访问体验
+
+![pig](https://github.com/STayinloves/CUGB-Class-Schedule-Crawler/raw/master/pic.png)
