@@ -4,13 +4,12 @@ var cheerio = require('cheerio')
 var fs = require('fs')
 
 var getRawHTML = function (r, callback) {
-    // console.log(r.headers)
     axios.get('http://202.204.105.22/academic/student/currcourse/currcourse.jsdo?groupId=&moduleId=2000', {
-            headers: {
-                'Cookie': r.headers.cookie
-            },
-            responseType: 'arraybuffer'
-        })
+        headers: {
+            'Cookie': r.headers.cookie
+        },
+        responseType: 'arraybuffer'
+    })
         .then((res) => {
             let data = iconv.decode(res.data, 'gbk')
             getCourses(data, callback)
