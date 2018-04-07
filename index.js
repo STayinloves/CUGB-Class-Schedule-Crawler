@@ -6,9 +6,9 @@ var getCaptcha = require('./captcha')
 var bodyParser = require('body-parser')
 var getCourse = require('./setCourses')
 var getWeek = require('./getWeek')
-app.use( bodyParser.json() );       // to support JSON-encoded bodies
+app.use(bodyParser.json());       // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
-  extended: true
+    extended: true
 }))
 
 app.get('/api/setcookie', (req, res) => {
@@ -24,7 +24,7 @@ app.get('/api/getCourse', (req, res) => {
 })
 
 app.get('/api/getWeek', (req, res) => {
-    getWeek(res)
+    getWeek(req, res)
 })
 
 app.post('/login', (req, res) => {

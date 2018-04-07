@@ -4,6 +4,9 @@ var cheerio = require('cheerio')
 var fs = require('fs')
 
 var getRawHTML = function (r, callback) {
+    if (!(r.headers && r.headers.cookie)) {
+        return callback.status(401).send('No cookie');
+    }
     axios.get('http://202.204.105.22/academic/student/currcourse/currcourse.jsdo?groupId=&moduleId=2000', {
         headers: {
             'Cookie': r.headers.cookie
@@ -39,7 +42,25 @@ var getCourses = function (rawHTML, callback) {
             let timeSource = $(td[9]).find('td')
             for (let i = 0; i < timeSource.length; i += 4) {
                 let newTime = {}
-                newTime.week = $(timeSource[i]).text().replace(/[ \n]*/g, "").replace(/、/, "-").replace(/[^-\d]/g, "").split('-').map(e => Number.parseInt(e))
+
+                let weekText = $(timeSource[i]).text()
+                newTime.week = weekText.replace(/[ \n]*/g, "").replace(/、/, "-").replace(/[^-\d]/g, "").split('-').map(e => Number.parseInt(e))
+                // 单双周判断
+                if (newTime.week.length > 1) {
+                    let a = Array.apply(null, Array(100)).map((item, i) => i + 1)
+                    let limit = 0
+                    if (weekText.includes('单')) {
+                        limit = 1
+                    } else if (weekText.includes('双')) {
+                        limit = 2
+                    }
+                    newTime.week = a.reduce((i, j) => {
+                        if (((limit === 1 && j % 2 === 1) || (limit === 2 && j % 2 === 0) || (!limit)) && j >= newTime.week[0] && j <= newTime.week[1]) {
+                            return i.concat(j)
+                        } else return i
+                    }, [])
+                }
+
                 transDate = {
                     '一': 1,
                     '二': 2,
@@ -62,7 +83,6 @@ var getCourses = function (rawHTML, callback) {
             current_course['time'] = time
         }
     })
-    callback.append('Content-Type', 'application/json')
     callback.send(JSON.stringify(course))
 }
 module.exports = getRawHTML

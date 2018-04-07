@@ -2,7 +2,7 @@ var hh;
 var currentWeek = 1;
 var previousWeek = 1;
 var course = {};
-(function setSideNav() {
+function setSideNav() {
     let nav = document.getElementById("side-nav");
     for (let i = 1; i < 18; i++) {
         let newA = document.createElement("a");
@@ -12,24 +12,54 @@ var course = {};
         newA.innerText = `第${i}周`;
         nav.appendChild(newA);
     }
-})();
+}
 
-axios.get("api/getWeek").then(res => {
-    currentWeek = parseInt(res.data.substr(1, res.data.length - 2));
-
-    document.getElementById(`week-${currentWeek}`).innerText += "(c)";
-    console.log(currentWeek);
-});
-axios.get("api/getCourse").then(res => {
-    hh = res.data;
-    if (JSON.stringify(hh) === "{}") {
+function clearAllData() {
+    if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+        navigator.serviceWorker.ready.then(function (reg) {
+            // set up a message channel to communicate with the SW
+            var channel = new MessageChannel();
+            channel.port1.onmessage = function (e) {
+                navigator.serviceWorker
+                    .getRegistrations()
+                    .then(function (registrations) {
+                        for (let registration of registrations) {
+                            registration.unregister()
+                        }
+                        console.log('done')
+                        alert("请登录后尝试");
+                        window.location.assign("/");
+                    })
+            }
+            mySW = reg.active;
+            mySW.postMessage('clear', [channel.port2]);
+        })
+    } else {
         alert("请登录后尝试");
         window.location.assign("/");
     }
-    setTimeout(function() {
-        setCourse(res.data);
-    }, 2000);
-});
+}
+
+setSideNav();
+
+axios.get("api/getWeek")
+    .then(function (res) {
+        currentWeek = parseInt(res.data.substr(1, res.data.length - 2));
+        document.getElementById(`week-${currentWeek}`).innerText += "(c)";
+        console.log(currentWeek);
+    })
+    .catch(function (err) {
+        clearAllData();
+    });
+
+axios.get("api/getCourse")
+    .then(function (res) {
+        setTimeout(function () {
+            setCourse(res.data);
+        }, 2000);
+    }).catch(function (err) {
+        clearAllData();
+    });
 
 var sideNavHighlight = () => {
     document
@@ -83,16 +113,16 @@ var setCourse = data => {
     }
     setTableI();
 };
-var setTable = d => {
-    currentWeek = d;
+function setTable(week) {
+    currentWeek = week;
     document.getElementById("spinner").removeAttribute("hidden");
     var table = document.getElementById("main");
     table.innerHTML = "";
-    setTimeout(function() {
+    setTimeout(function () {
         setTableI();
     }, 500);
 };
-var setTableI = () => {
+function setTableI() {
     sideNavHighlight();
     var table = document.getElementById("main");
     table.innerHTML = "";
@@ -106,9 +136,9 @@ var setTableI = () => {
             for (let i = 0; i < course[currentWeek][day][cla].length; i++) {
                 text +=
                     `<div class='cl' style='background-color:${course[
-                        currentWeek
+                    currentWeek
                     ][day][cla][i]["color"]["color"]};color:${course[
-                        currentWeek
+                    currentWeek
                     ][day][cla][i]["color"]["_color"]};height:${height}%;'>` +
                     course[currentWeek][day][cla][i]["name"] +
                     "<br>" +
@@ -129,9 +159,10 @@ var setTableI = () => {
     }
     document.getElementById("spinner").setAttribute("hidden", "");
 };
-var logout = () => {
+
+function logout() {
     document.cookie = "JSESSIONID=f; expires=Thu, 18 Dec 2013 12:00:00 UTC";
-    window.location.assign("/");
+    clearAllData()
 };
 var _mdcolor = [0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0];
 var mdcolor = [
