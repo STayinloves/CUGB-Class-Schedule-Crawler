@@ -7,7 +7,8 @@ var getRawHTML = function (r, callback) {
     if (!(r.headers && r.headers.cookie)) {
         return callback.status(401).send('No cookie');
     }
-    axios.get('http://202.204.105.22/academic/student/currcourse/currcourse.jsdo?groupId=&moduleId=2000', {
+
+    axios.get('http://jwc.cugb.edu.cn/academic/student/currcourse/currcourse.jsdo?groupId=&moduleId=2000', {
         headers: {
             'Cookie': r.headers.cookie
         },
@@ -21,6 +22,7 @@ var getRawHTML = function (r, callback) {
             console.log(err)
         })
 }
+
 var getCourses = function (rawHTML, callback) {
     let $ = cheerio.load(rawHTML)
     let course = {}

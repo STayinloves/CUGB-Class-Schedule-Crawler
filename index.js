@@ -33,6 +33,7 @@ app.post('/login', (req, res) => {
 
 app.use(express.static(__dirname + '/public'));
 
-app.listen(80, () => {
-    console.log('server starts at localhost:3000')
+const PORT = 80
+app.listen(PORT, () => {
+    console.log('Server starts at http://localhost:' + PORT)
 })

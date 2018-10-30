@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'v1'
+const CACHE_VERSION = 'v2'
 
 self.addEventListener('install', function (event) {
     event.waitUntil(
@@ -12,10 +12,14 @@ self.addEventListener('install', function (event) {
                 '/js/material.min.js',
                 '/js/es6-promise.auto.min.js',
                 '/api/getCourse',
-                '/api/getWeek'
+                '/api/getWeek',
+                'https://fonts.googleapis.com/icon?family=Material+Icons',
+                'https://fonts.gstatic.com/s/materialicons/v41/flUhRq6tzZclQEJ-Vdg-IuiaDsNc.woff2',
             ].map(function (urlToPrefetch) {
                 return new Request(urlToPrefetch, {
-                    credentials: 'include'
+                    // Send user credentials (cookies, basic http auth, etc..) 
+                    // if the URL is on the same origin as the calling script.
+                    credentials: 'same-origin'
                 });
             }));
         })
@@ -38,20 +42,11 @@ self.addEventListener('activate', function (event) {
 
 self.addEventListener('fetch', function (event) {
     event.respondWith(
-        caches.match(event.request)
-            .then(function (response) {
-                if (response) {
-                    return response;
-                } else {
-                    return fetch(event.request)
-                        .catch(function (err) {
-                            console.log(err)
-                        });
-                }
+        fetch(event.request).catch(function () {
+            return caches.match(event.request).catch(function () {
+                return caches.match('/nothing')
             })
-            .catch(function () {
-                return caches.match('/nothing');
-            })
+        })
     );
 });
 

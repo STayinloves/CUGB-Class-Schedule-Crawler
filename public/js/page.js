@@ -1,10 +1,12 @@
-var hh;
 var currentWeek = 1;
 var previousWeek = 1;
 var course = {};
+const MAX_WEEK = 18
+const DAY_OF_WEEK = 7
+const CLASS_OF_DAY = 11
 function setSideNav() {
     let nav = document.getElementById("side-nav");
-    for (let i = 1; i < 18; i++) {
+    for (let i = 1; i <= MAX_WEEK; i++) {
         let newA = document.createElement("a");
         newA.setAttribute("class", "mdl-navigation__link");
         newA.setAttribute("onclick", `setTable(${i})`);
@@ -17,6 +19,7 @@ function setSideNav() {
 function clearAllData() {
     if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
         navigator.serviceWorker.ready.then(function (reg) {
+
             // set up a message channel to communicate with the SW
             var channel = new MessageChannel();
             channel.port1.onmessage = function (e) {
@@ -77,11 +80,11 @@ var sideNavHighlight = () => {
 };
 
 var setCourse = data => {
-    for (let i = 0; i <= 17; i++) {
+    for (let i = 0; i <= MAX_WEEK; i++) {
         course[i] = {};
-        for (let j = 0; j <= 7; j++) {
+        for (let j = 0; j <= DAY_OF_WEEK; j++) {
             course[i][j] = {};
-            for (let k = 0; k <= 11; k++) {
+            for (let k = 0; k <= CLASS_OF_DAY; k++) {
                 course[i][j][k] = new Array();
             }
         }
@@ -106,7 +109,9 @@ var setCourse = data => {
                         color: color
                     });
                 } catch (err) {
-                    console.log(err, data[i], k, l);
+                    console.log(err);
+                    console.log(data[i])
+                    console.log(k, l)
                 }
             }
         }
@@ -128,7 +133,7 @@ function setTableI() {
     table.innerHTML = "";
     for (let cla = 1; cla <= 5; cla++) {
         let newTR = document.createElement("tr");
-        for (let day = 1; day <= 7; day++) {
+        for (let day = 1; day <= DAY_OF_WEEK; day++) {
             let newTD = document.createElement("td");
             let newDiv = document.createElement("div");
             let text = "";

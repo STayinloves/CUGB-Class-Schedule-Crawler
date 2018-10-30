@@ -35,7 +35,8 @@
             </div>
             <input name="cookie" style="display: none" />
             <img id="captcha" onclick="setCaptcha()" />
-            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored" type="submit" value="login">
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored" type="submit"
+                value="login">
                 login
             </button>
         </form>
@@ -46,14 +47,18 @@
 </body>
 <script src="js/es6-promise.auto.min.js"></script>
 <script src="js/axios.min.js"></script>
-</script>
 <script>
+    function setCookie(cookie) {
+        if (cookie) {
+            document.querySelector('[name=cookie]').setAttribute('value', cookie)
+            console.log(cookie)
+        }
+    }
     var cookie = ""
     axios.get('api/setcookie')
         .then(function (res) {
             cookie = res.data
-            console.log(cookie)
-            document.querySelector('[name=cookie]').setAttribute('value', cookie)
+            setCookie(res.data)
             setCaptcha()
         })
 
@@ -64,8 +69,9 @@
                 'fuckie': Math.random().toString().substr(2)
             }
         })
-            .then(function (r) {
-                document.querySelector('#captcha').setAttribute('src', "data:image/jpeg;base64," + r.data)
+            .then(function (res) {
+                document.querySelector('#captcha')
+                    .setAttribute('src', "data:image/jpeg;base64," + res.data)
             })
     }
 </script>
